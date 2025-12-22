@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brick Breaker - GameZDD</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6e7f 0%, #bfe9ff 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .game-container {
+            background: linear-gradient(145deg, #ffffff 0%, #f5f7fa 100%);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4), 
+                        0 10px 25px rgba(255, 107, 107, 0.3);
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 40px;
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .game-main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1 1 55%;
+            gap: 20px;
+        }
+
+        .game-title {
+            font-size: 40px;
+            background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .game-sidebar {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(200px, 1fr));
+            gap: 20px;
+            flex: 1 1 45%;
+            max-width: 760px;
+            padding-right: 10px;
+        }
+
+        .info-panel {
+            background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
+            padding: 18px;
+            border-radius: 18px;
+            color: white;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .info-panel h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-value {
+            font-size: 34px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .stat-label {
+            text-align: center;
+            font-size: 14px;
+            opacity: 0.85;
+        }
+
+        .controls-panel {
+            background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 18px;
+            border-radius: 18px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            border: 2px solid rgba(255, 107, 107, 0.2);
+        }
+
+        .controls-panel h3 {
+            background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .control-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            font-size: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .control-key {
+            background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 13px;
+            box-shadow: 0 3px 10px rgba(255, 107, 107, 0.4),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .span-2 {
+            grid-column: 1 / -1;
+        }
+
+        #gameCanvas {
+            display: block;
+            margin: 0 auto;
+            border: 5px solid transparent;
+            border-radius: 15px;
+            background: linear-gradient(145deg, #1a1a2e 0%, #0a0a0a 100%);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), 
+                        inset 0 0 60px rgba(255, 107, 107, 0.15),
+                        0 0 30px rgba(255, 107, 107, 0.3);
+            background-clip: padding-box;
+            border-image: linear-gradient(135deg, #FF6B6B, #4ECDC4) 1;
+        }
+
+        .btn {
+            padding: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 5px;
+            grid-column: 1 / -1;
+        }
+
+        .btn-group .btn {
+            flex: 1 1 calc(50% - 12px);
+            min-width: 200px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #95E1D3 0%, #4ECDC4 100%);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(149, 225, 211, 0.5);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #F38181 0%, #FF6B6B 100%);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(243, 129, 129, 0.5);
+        }
+
+        .btn:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .power-ups-display {
+            margin-top: 12px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .power-ups-display h4 {
+            color: #FF6B6B;
+            margin-bottom: 8px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .power-up-list {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .power-up-item {
+            padding: 6px 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        /* Speed control styles */
+        .speed-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+        }
+
+        .speed-value {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            outline: none;
+            transition: opacity 0.2s;
+        }
+
+        input[type="range"]:hover {
+            opacity: 1;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            border: 3px solid #FF6B6B;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            border: 3px solid #FF6B6B;
+        }
+
+        .speed-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-top: 6px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 1200px) {
+            .game-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 30px;
+            }
+
+            .game-main {
+                width: 100%;
+            }
+
+            .game-sidebar {
+                width: 100%;
+                max-width: 640px;
+                grid-template-columns: 1fr;
+                padding-right: 0;
+            }
+
+            .btn-group .btn {
+                flex: 1 1 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 20px;
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, #ffffff 0%, #f5f7fa 100%);
+            padding: 45px;
+            border-radius: 25px;
+            text-align: center;
+            max-width: 550px;
+            animation: slideIn 0.4s ease;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5),
+                        0 10px 30px rgba(255, 107, 107, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px) scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-content h2 {
+            font-size: 36px;
+            color: #FF6B6B;
+            margin-bottom: 20px;
+        }
+
+        .modal-content p {
+            font-size: 18px;
+            margin: 15px 0;
+            line-height: 1.6;
+        }
+
+        .encouragement {
+            font-size: 28px;
+            color: #4CAF50;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .stars {
+            font-size: 48px;
+            margin: 20px 0;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .pulse {
+            animation: pulse 1s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-main">
+            <h1 class="game-title">🏓 Brick Breaker</h1>
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+        </div>
+
+        <div class="game-sidebar">
+            <div class="info-panel">
+                <h3>🏆 Score</h3>
+                <div class="stat-value" id="score">0</div>
+                <div class="stat-label">Points collected</div>
+            </div>
+
+            <div class="info-panel">
+                <h3>❤️ Lives</h3>
+                <div class="stat-value" id="lives">❤️❤️❤️</div>
+                <div class="stat-label">Balls remaining</div>
+            </div>
+
+            <div class="info-panel span-2">
+                <h3>🎯 Level</h3>
+                <div class="stat-value" id="level">1</div>
+                <div class="stat-label">Stage number</div>
+            </div>
+
+            <div class="info-panel span-2">
+                <h3>🎯 Active Power-Ups</h3>
+                <div class="power-up-list" id="powerUpsList">
+                    <span style="color: rgba(255,255,255,0.7);">No active power-ups</span>
+                </div>
+            </div>
+
+            <div class="info-panel span-2">
+                <h3>⚡ Speed Control</h3>
+                <div class="speed-display">
+                    <span>Ball Speed:</span>
+                    <span class="speed-value" id="speedValue">1.0x</span>
+                </div>
+                <input type="range" id="speedSlider" min="0.5" max="2" step="0.1" value="1">
+                <div class="speed-labels">
+                    <span>0.5x (Slower)</span>
+                    <span>1.0x (Normal)</span>
+                    <span>2.0x (Faster)</span>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" id="startBtn">🎮 Start Game</button>
+                <button class="btn btn-warning" id="pauseBtn" style="display:none;">⏸️ Pause</button>
+                <button class="btn btn-secondary" id="backBtn">🏠 Back to Menu</button>
+                <button class="btn btn-secondary" id="fullscreenBtn">🖥️ Fullscreen</button>
+            </div>
+
+            <div class="controls-panel span-2">
+                <h3>🎮 Controls</h3>
+                <div class="control-item">
+                    <span>Move Left</span>
+                    <span style="opacity: 0.7; font-style: italic;">Arrow Left or A</span>
+                </div>
+                <div class="control-item">
+                    <span>Move Right</span>
+                    <span style="opacity: 0.7; font-style: italic;">Arrow Right or D</span>
+                </div>
+                <div class="control-item">
+                    <span>Launch Ball</span>
+                    <span style="opacity: 0.7; font-style: italic;">Space or Enter</span>
+                </div>
+                <div class="control-item">
+                    <span>Pause</span>
+                    <span style="opacity: 0.7; font-style: italic;">ESC Key</span>
+                </div>
+                <div class="control-item">
+                    <span>Mouse Control</span>
+                    <span style="opacity: 0.7; font-style: italic;">Move Mouse</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Level Complete Modal -->
+    <div class="modal" id="levelCompleteModal">
+        <div class="modal-content">
+            <h2 class="pulse">🎉 Level Complete!</h2>
+            <p class="encouragement">Fantastic job!</p>
+            <div class="stars" id="starsEarned">⭐⭐⭐</div>
+            <p>Score: <span id="levelScore">0</span></p>
+            <button class="btn btn-primary" id="nextLevelBtn">➡️ Next Level</button>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div class="modal" id="gameOverModal">
+        <div class="modal-content">
+            <h2>🌟 Try Again!</h2>
+            <p class="encouragement">You did amazing!</p>
+            <p>Final Score: <span id="finalScore">0</span></p>
+            <p>Levels Completed: <span id="levelsCompleted">0</span></p>
+            <button class="btn btn-primary" id="retryBtn">🔄 Play Again</button>
+            <button class="btn btn-secondary" id="menuBtn">🏠 Back to Menu</button>
+        </div>
+    </div>
+
+    <!-- Pause Modal -->
+    <div class="modal" id="pauseModal">
+        <div class="modal-content">
+            <h2>⏸️ Paused</h2>
+            <p>Take your time! Ready to continue?</p>
+            <button class="btn btn-primary" id="resumeBtn">▶️ Resume</button>
+            <button class="btn btn-secondary" id="quitBtn">🏠 Quit to Menu</button>
+        </div>
+    </div>
+
+    <script src="../../engine/gameEngine.js"></script>
+    <script src="../../engine/audioManager.js"></script>
+    <script src="../../engine/inputHandler.js"></script>
+    <script src="../../engine/saveManager.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>

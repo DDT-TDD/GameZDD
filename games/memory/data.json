@@ -1,0 +1,37 @@
+{
+  "labels": {
+    "title": "Memory Game - Card Matching",
+    "header": "🎮 Memory Card Game",
+    "instructions": "Click the cards to find <strong>{{requiredMatches}}</strong> matching pairs",
+    "stats": "You found all matches in <strong>{{clicks}}</strong> clicks with <strong>{{sucessPercent}}%</strong> efficiency!",
+    "victory": "You Win! 🎉",
+    "footer": "Memory Game | Click cards to match pairs | Game complete when all matches found"
+  },
+  "cardDimensions": {
+    "unit": "px",
+    "gutter": 10,
+    "height": 80,
+    "width": 80
+  },
+  "lvls": {
+    "Easy": {
+      "rows": 3,
+      "cols": 4,
+      "requiredMatches": 2,
+      "keptRevealed": 1
+    },
+    "Medium": {
+      "rows": 4,
+      "cols": 7,
+      "requiredMatches": 2,
+      "keptRevealed": 0
+    },
+    "Hard": {
+      "rows": 6,
+      "cols": 6,
+      "requiredMatches": 3,
+      "keptRevealed": 2,
+      "panicMode": true
+    }
+  }
+}

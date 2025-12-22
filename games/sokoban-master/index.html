@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sokoban Master - 100 Levels</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+        }
+
+        .game-container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            max-width: 850px;
+            width: 95%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #FFD700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 10px;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-around;
+            margin: 15px 0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .info-item {
+            background: rgba(255,255,255,0.1);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .info-item strong {
+            color: #4ECDC4;
+        }
+
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border: 3px solid #FFD700;
+            border-radius: 10px;
+            background: #1a1a2e;
+            box-shadow: 0 0 20px rgba(255,215,0,0.3);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.1);
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+
+        input[type="range"] {
+            width: 120px;
+        }
+
+        .instructions {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .instructions strong {
+            color: #FFD700;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <header>
+            <h1>📦 Sokoban Master</h1>
+            <p style="font-size: 18px; color: #4ECDC4;">100 Classic Puzzle Levels</p>
+        </header>
+
+        <div class="game-info">
+            <div class="info-item"><strong>Level:</strong> <span id="level">1</span>/100</div>
+            <div class="info-item"><strong>Moves:</strong> <span id="moves">0</span></div>
+            <div class="info-item"><strong>Best:</strong> <span id="best">-</span></div>
+            <div class="info-item"><strong>Boxes:</strong> <span id="boxes">0</span>/0</div>
+        </div>
+
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+        <div class="controls">
+            <button id="startBtn">🎮 Start Game</button>
+            <button id="backBtn" style="background: #e74c3c;">🏠 Back to Menu</button>
+            <button id="pauseBtn" style="display:none;">⏸️ Pause</button>
+            <button id="undoBtn" style="background: #f39c12;">↩️ Undo (Z)</button>
+            <button id="resetBtn" style="background: #95a5a6;">🔄 Reset Level</button>
+            <button id="fullscreenBtn">🖥️ Fullscreen</button>
+            <div class="speed-control">
+                <label>Speed:</label>
+                <input type="range" id="speedSlider" min="0.5" max="2.0" step="0.1" value="1.0">
+                <span id="speedValue">1.0x</span>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <strong>🎯 How to Play:</strong><br>
+            • Use Arrow Keys or WASD to move the player<br>
+            • Push all boxes (📦) onto goal positions (🎯)<br>
+            • Press Z or Undo button to undo moves<br>
+            • Complete all 100 levels! Each level is a classic Sokoban puzzle<br>
+            • Try to complete each level in the minimum number of moves
+        </div>
+    </div>
+
+    <script src="../../engine/audioManager.js"></script>
+    <script src="../../engine/inputHandler.js"></script>
+    <script src="../../engine/saveManager.js"></script>
+    <script src="levels.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>

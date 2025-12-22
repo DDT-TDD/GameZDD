@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pac-Man - GameZDD</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .game-header h1 {
+            color: #FFE600;
+            font-size: 36px;
+            text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+            margin-bottom: 10px;
+        }
+
+        .game-header p {
+            color: #fff;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        #gameCanvas {
+            display: block;
+            border: 3px solid #09f;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0, 153, 255, 0.5);
+        }
+
+        .game-controls {
+            margin-top: 20px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .game-controls h3 {
+            color: #09f;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .game-controls p {
+            margin: 5px 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .control-item {
+            background: rgba(0, 153, 255, 0.2);
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid rgba(0, 153, 255, 0.3);
+        }
+
+        .control-item strong {
+            color: #09f;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <h1>🎮 PAC-MAN 🎮</h1>
+            <p>Classic arcade maze chase game</p>
+        </div>
+        
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        
+        <div class="game-controls">
+            <h3>📝 How to Play</h3>
+            <p>Guide Pac-Man through the maze, eat all the dots, and avoid the ghosts!</p>
+            
+            <div class="controls-grid">
+                <div class="control-item">
+                    <strong>↑ ↓ ← →</strong> - Move Pac-Man
+                </div>
+                <div class="control-item">
+                    <strong>SPACE</strong> - Pause/Resume
+                </div>
+                <div class="control-item">
+                    <strong>ENTER</strong> - Start Game
+                </div>
+                <div class="control-item">
+                    <strong>Power Pellet</strong> - Eat ghosts!
+                </div>
+            </div>
+            
+            <p style="margin-top: 15px; font-size: 12px; opacity: 0.7;">
+                🔵 Eat the large power pellets to turn the ghosts blue and make them vulnerable!
+            </p>
+            
+            <a href="../../launcher.html" class="back-button">← Back to Games</a>
+        </div>
+    </div>
+
+    <!-- Manager Scripts -->
+    <script src="../../engine/audioManager.js"></script>
+    <script src="../../engine/inputHandler.js"></script>
+    <script src="../../engine/saveManager.js"></script>
+    <!-- Game Engine -->
+    <script src="game.js"></script>
+    <!-- Game Logic -->
+    <script src="index.js"></script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Game - Card Matching</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .game-header {
+            margin: 20px 0 10px;
+        }
+
+        .lvlList {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 10px 0 20px;
+        }
+
+        #game-info {
+            font-size: 16px;
+            color: #555;
+            margin: 15px 0;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .game-footer-nav {
+            margin-top: 20px;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <h1 class="game-header">🎮 Memory Card Game</h1>
+    <p id="game-info">Select a difficulty level to start</p>
+    
+    <div class="lvlList"></div>
+    
+    <div id="playfield-wrapper">
+        <div class="win-text"></div>
+    </div>
+
+    <footer class="game-footer-nav">
+        <p><a href="../../launcher.html" class="back-button">← Back to Games</a></p>
+    </footer>
+
+    <!-- Manager Scripts -->
+    <script src="../../engine/audioManager.js"></script>
+    <script src="../../engine/inputHandler.js"></script>
+    <script src="../../engine/saveManager.js"></script>
+    <script src="game.js"></script>
+    <script>
+        // Load game data and initialize
+        fetch('data.json')
+            .then(response => response.json())
+            .then(gameData => {
+                new MemoryGame(gameData);
+            })
+            .catch(error => {
+                console.error('Error loading game data:', error);
+                document.getElementById('game-info').innerHTML = '❌ Error loading game. Please refresh the page.';
+            });
+    </script>
+</body>
+</html>

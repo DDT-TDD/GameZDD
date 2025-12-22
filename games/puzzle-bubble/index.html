@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bubble Pop - GameZDD</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #FFB84D 0%, #FF6B9D 100%);
+            min-height: 100vh;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+
+        .game-container {
+            background: linear-gradient(145deg, #ffffff 0%, #f5f7fa 100%);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4), 
+                        0 10px 25px rgba(255, 180, 77, 0.3);
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 40px;
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .game-main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1 1 55%;
+            gap: 20px;
+        }
+
+        .game-title {
+            font-size: 36px;
+            background: linear-gradient(135deg, #FFB84D 0%, #FF6B9D 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #gameCanvas {
+            border: 5px solid transparent;
+            border-radius: 15px;
+            background: linear-gradient(145deg, #1a1a2e 0%, #0a0a0a 100%);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), 
+                        inset 0 0 60px rgba(255, 180, 77, 0.15),
+                        0 0 30px rgba(255, 180, 77, 0.3);
+            background-clip: padding-box;
+            border-image: linear-gradient(135deg, #FFB84D, #FF6B9D) 1;
+        }
+
+        .game-sidebar {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(200px, 1fr));
+            gap: 20px;
+            flex: 1 1 45%;
+            max-width: 760px;
+            padding-right: 10px;
+        }
+
+        .info-panel {
+            background: linear-gradient(135deg, #FFB84D 0%, #FF6B9D 100%);
+            padding: 18px;
+            border-radius: 18px;
+            color: white;
+            box-shadow: 0 8px 25px rgba(255, 180, 77, 0.4),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .info-panel h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-value {
+            font-size: 36px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .stat-label {
+            text-align: center;
+            font-size: 14px;
+            opacity: 0.85;
+        }
+
+        .controls-panel {
+            background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 18px;
+            border-radius: 18px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            border: 2px solid rgba(255, 180, 77, 0.2);
+        }
+
+        .controls-panel h3 {
+            background: linear-gradient(135deg, #FFB84D 0%, #FF6B9D 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .control-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            font-size: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .control-key {
+            background: linear-gradient(135deg, #FFB84D 0%, #FF6B9D 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 13px;
+            box-shadow: 0 3px 10px rgba(255, 180, 77, 0.4),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .span-2 {
+            grid-column: 1 / -1;
+        }
+
+        .btn {
+            padding: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #FFB84D 0%, #FF6B9D 100%);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(255, 180, 77, 0.5);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 5px;
+            grid-column: 1 / -1;
+        }
+
+        .btn-group .btn {
+            flex: 1 1 calc(50% - 12px);
+            min-width: 200px;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            outline: none;
+            transition: opacity 0.2s;
+            margin-top: 10px;
+        }
+
+        input[type="range"]:hover {
+            opacity: 1;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(255, 180, 77, 0.5);
+            border: 3px solid #FFB84D;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(255, 180, 77, 0.5);
+            border: 3px solid #FFB84D;
+        }
+
+        .speed-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+        }
+
+        .speed-value {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .speed-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-top: 6px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 1200px) {
+            .game-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 30px;
+            }
+
+            .game-main {
+                width: 100%;
+            }
+
+            .game-sidebar {
+                width: 100%;
+                max-width: 640px;
+                grid-template-columns: 1fr;
+                padding-right: 0;
+            }
+
+            .btn-group .btn {
+                flex: 1 1 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 20px;
+            }
+        }
+
+        /* Grid descent animation - triggers when new row added */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            10% { transform: translateX(-5px) translateY(-3px); }
+            20% { transform: translateX(5px) translateY(3px); }
+            30% { transform: translateX(-3px) translateY(-5px); }
+            40% { transform: translateX(4px) translateY(2px); }
+            50% { transform: translateX(-4px) translateY(-4px); }
+            60% { transform: translateX(3px) translateY(3px); }
+            70% { transform: translateX(-5px) translateY(-2px); }
+            80% { transform: translateX(4px) translateY(4px); }
+            90% { transform: translateX(-2px) translateY(3px); }
+        }
+
+        #gameCanvas.shaking {
+            animation: shake 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-main">
+            <h1 class="game-title">🫧 Bubble Pop</h1>
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+        </div>
+
+        <div class="game-sidebar">
+            <div class="info-panel">
+                <h3>🎯 Score</h3>
+                <div class="stat-value" id="score">0</div>
+                <div class="stat-label">Points earned</div>
+            </div>
+
+            <div class="info-panel">
+                <h3>🫧 Bubbles</h3>
+                <div class="stat-value" id="bubbles">0</div>
+                <div class="stat-label">Remaining</div>
+            </div>
+
+            <div class="info-panel span-2">
+                <h3>📊 Level</h3>
+                <div class="stat-value" id="level">1</div>
+                <div class="stat-label">Current challenge</div>
+            </div>
+
+            <div class="info-panel span-2">
+                <h3>⚡ Speed Control</h3>
+                <div class="speed-display">
+                    <span>Shot Speed:</span>
+                    <span class="speed-value" id="speedValue">1.0x</span>
+                </div>
+                <input type="range" id="speedSlider" min="0.5" max="2" step="0.1" value="1">
+                <div class="speed-labels">
+                    <span>0.5x</span>
+                    <span>1.0x</span>
+                    <span>2.0x</span>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" id="startBtn" title="Press to start game">🎮 Start Game</button>
+                <button class="btn btn-secondary" id="pauseBtn" style="display:none;" title="Press ESC to pause">⏸️ Pause</button>
+                <button class="btn btn-secondary" id="backBtn" title="Return to main menu">🏠 Back to Menu</button>
+                <button class="btn btn-secondary" id="fullscreenBtn" title="Toggle fullscreen mode">🖥️ Fullscreen</button>
+            </div>
+
+            <div class="controls-panel span-2">
+                <h3>🎮 Controls</h3>
+                <div class="control-item">
+                    <span>Aim Left</span>
+                    <span style="opacity: 0.7; font-style: italic;">Arrow Left or A</span>
+                </div>
+                <div class="control-item">
+                    <span>Aim Right</span>
+                    <span style="opacity: 0.7; font-style: italic;">Arrow Right or D</span>
+                </div>
+                <div class="control-item">
+                    <span>Shoot</span>
+                    <span style="opacity: 0.7; font-style: italic;">Space Bar</span>
+                </div>
+                <div class="control-item">
+                    <span>Pause</span>
+                    <span style="opacity: 0.7; font-style: italic;">ESC Key</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../engine/gameEngine.js"></script>
+    <script src="../../engine/audioManager.js"></script>
+    <script src="../../engine/inputHandler.js"></script>
+    <script src="../../engine/saveManager.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
