@@ -83,16 +83,8 @@ var Game = function(id,params){
 			this._settings.y = pos.y;
 			// Initialize coord property so it's available immediately
 			this.coord = params.location.position2coord(this.x, this.y);
-			if(!window._itemInitLogged) {
-				console.log('Item init from coord: x=', this.x, 'y=', this.y, 'type=', params.type, 'params.coord=', params.coord);
-				window._itemInitLogged = true;
-			}
-		} else {
-			if(!window._itemInitFailed) {
-				console.log('Item init FAILED: params.location=', params.location, 'params.coord=', params.coord);
-				window._itemInitFailed = true;
-			}
 		}
+		// else: item created without a map location (positional)
 	};
 	Item.prototype.bind = function(eventType,callback){
 		if(this._stage){

@@ -1,10 +1,12 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Super Mario V2 - Realistic Platformer</title>
     <style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@600;700&display=swap');
+
         * {
             margin: 0;
             padding: 0;
@@ -12,12 +14,13 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Rajdhani','Segoe UI',sans-serif, Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
             min-height: 100vh;
             padding: 15px;
             overflow-x: hidden;
-        }
+          color: #fff;
+}
 
         .game-wrapper {
             display: flex;
@@ -27,7 +30,7 @@
         }
 
         .game-container {
-            background: linear-gradient(145deg, #ffffff 0%, #f5f7fa 100%);
+            background:rgba(10,10,20,0.92);
             border-radius: 25px;
             padding: 30px;
             box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4), 
@@ -38,6 +41,7 @@
 
         .game-title {
             font-size: 36px;
+            font-family: 'Orbitron', monospace;
             background: linear-gradient(135deg, #FF0000 0%, #FF6347 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -142,7 +146,7 @@
 
         .game-info {
             margin-top: 20px;
-            background: #f8f9fa;
+            background:rgba(255,255,255,0.05);
             padding: 18px;
             border-radius: 18px;
         }
@@ -180,6 +184,7 @@
 
             .game-title {
                 font-size: 20px;
+            font-family: 'Orbitron', monospace;
                 margin-bottom: 10px;
             }
 

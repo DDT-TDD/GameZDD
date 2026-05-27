@@ -509,23 +509,44 @@ class TunnelQuestGame {
 				const py = y * this.tileSize;
 				switch(tile.type) {
 					case 'bedrock':
-						this.ctx.fillStyle = '#3E2A1A';
+						this.ctx.fillStyle = '#263238'; // Solid dark grey steel-hard slate
 						break;
 					case 'rock':
-						this.ctx.fillStyle = '#4E342E';
+						this.ctx.fillStyle = '#37474F';
 						break;
 					case 'dirt':
-						this.ctx.fillStyle = '#A66A3F';
+						this.ctx.fillStyle = '#5D4037'; // Warm brownish dirt
 						break;
 					default:
-						this.ctx.fillStyle = '#2E2218';
+						this.ctx.fillStyle = '#1A0E07'; // Deep cave background
 				}
 				if (tile.type !== 'tunnel') {
 					this.ctx.fillRect(px, py, this.tileSize, this.tileSize);
-				}
-				if (tile.type === 'dirt') {
-					this.ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
-					this.ctx.fillRect(px, py, this.tileSize, this.tileSize);
+					
+					// Draw textured details for blocks
+					if (tile.type === 'bedrock') {
+						this.ctx.strokeStyle = '#1a1a1a';
+						this.ctx.lineWidth = 1;
+						this.ctx.strokeRect(px, py, this.tileSize, this.tileSize);
+						// Diagonal crossed steel bands
+						this.ctx.strokeStyle = '#37474F';
+						this.ctx.beginPath();
+						this.ctx.moveTo(px + 4, py + 4);
+						this.ctx.lineTo(px + this.tileSize - 4, py + this.tileSize - 4);
+						this.ctx.stroke();
+					} else if (tile.type === 'dirt') {
+						// Small soil/pebble patterns
+						this.ctx.fillStyle = '#4E342E';
+						this.ctx.fillRect(px + 6, py + 8, 3, 3);
+						this.ctx.fillRect(px + 22, py + 18, 4, 3);
+						this.ctx.fillRect(px + 12, py + 28, 3, 4);
+						this.ctx.fillRect(px + 30, py + 10, 3, 3);
+						// Grass or root tips on top border
+						if (y === 1) {
+							this.ctx.fillStyle = '#2E7D32'; // Green roots/moss
+							this.ctx.fillRect(px, py, this.tileSize, 4);
+						}
+					}
 				}
 			}
 		}
@@ -538,12 +559,30 @@ class TunnelQuestGame {
 			const px = gem.x * this.tileSize + this.tileSize / 2;
 			const py = gem.y * this.tileSize + this.tileSize / 2;
 			const radius = 8 + Math.sin(gem.pulse) * 2;
-			this.ctx.shadowBlur = 20;
-			this.ctx.shadowColor = '#FFD700';
-			this.ctx.fillStyle = '#FFD700';
+			
+			// Draw high-fidelity ruby gem!
+			this.ctx.shadowBlur = 15;
+			this.ctx.shadowColor = '#E91E63';
+			this.ctx.fillStyle = '#FF2E93';
+			
+			// Diamond crystal shape
 			this.ctx.beginPath();
-			this.ctx.arc(px, py, radius, 0, Math.PI * 2);
+			this.ctx.moveTo(px, py - radius);
+			this.ctx.lineTo(px + radius, py);
+			this.ctx.lineTo(px, py + radius);
+			this.ctx.lineTo(px - radius, py);
+			this.ctx.closePath();
 			this.ctx.fill();
+			
+			// Gem highlight
+			this.ctx.fillStyle = '#FFFFFF';
+			this.ctx.beginPath();
+			this.ctx.moveTo(px - radius/3, py - radius/3);
+			this.ctx.lineTo(px, py - radius);
+			this.ctx.lineTo(px + radius/3, py - radius/3);
+			this.ctx.closePath();
+			this.ctx.fill();
+
 			this.ctx.shadowBlur = 0;
 		}
 	}
@@ -551,65 +590,257 @@ class TunnelQuestGame {
 	drawExit() {
 		const px = this.exit.x * this.tileSize;
 		const py = this.exit.y * this.tileSize;
-		this.ctx.fillStyle = this.exit.open ? '#4CAF50' : '#8B5A2B';
-		this.ctx.fillRect(px + 4, py + 4, this.tileSize - 8, this.tileSize - 8);
+		
+		// Draw concrete frame
+		this.ctx.fillStyle = '#455A64';
+		this.ctx.fillRect(px + 2, py + 2, this.tileSize - 4, this.tileSize - 4);
+		
+		// Draw hazard stripes on frame
+		this.ctx.strokeStyle = '#FFEB3B';
+		this.ctx.lineWidth = 2;
+		this.ctx.beginPath();
+		this.ctx.moveTo(px + 2, py + 2);
+		this.ctx.lineTo(px + 8, py + 8);
+		this.ctx.moveTo(px + this.tileSize - 2, py + 2);
+		this.ctx.lineTo(px + this.tileSize - 8, py + 8);
+		this.ctx.stroke();
+
 		if (this.exit.open) {
+			// Green glowing portal / lift door!
+			this.ctx.fillStyle = '#1B5E20';
+			this.ctx.fillRect(px + 6, py + 6, this.tileSize - 12, this.tileSize - 12);
+			
+			// Pulse glow
+			const pulse = Math.abs(Math.sin(Date.now() / 200)) * 0.4 + 0.6;
+			this.ctx.shadowBlur = 10;
+			this.ctx.shadowColor = '#4CAF50';
+			this.ctx.strokeStyle = `rgba(76, 175, 80, ${pulse})`;
+			this.ctx.lineWidth = 3;
+			this.ctx.strokeRect(px + 6, py + 6, this.tileSize - 12, this.tileSize - 12);
+			this.ctx.shadowBlur = 0;
+			
+			// Draw classic retro exit ladder symbol inside
 			this.ctx.strokeStyle = '#FFFFFF';
 			this.ctx.lineWidth = 2;
-			this.ctx.strokeRect(px + 4, py + 4, this.tileSize - 8, this.tileSize - 8);
+			this.ctx.beginPath();
+			// Sides of ladder
+			this.ctx.moveTo(px + 15, py + 8);
+			this.ctx.lineTo(px + 15, py + 32);
+			this.ctx.moveTo(px + 25, py + 8);
+			this.ctx.lineTo(px + 25, py + 32);
+			// Rungs
+			for (let ry = py + 12; ry <= py + 28; ry += 6) {
+				this.ctx.moveTo(px + 15, ry);
+				this.ctx.lineTo(px + 25, ry);
+			}
+			this.ctx.stroke();
+		} else {
+			// Closed brown padlock metal gate
+			this.ctx.fillStyle = '#5D4037';
+			this.ctx.fillRect(px + 6, py + 6, this.tileSize - 12, this.tileSize - 12);
+			
+			this.ctx.strokeStyle = '#3E2723';
+			this.ctx.lineWidth = 2;
+			this.ctx.strokeRect(px + 6, py + 6, this.tileSize - 12, this.tileSize - 12);
+			
+			// Lock icon
+			this.ctx.beginPath();
+			this.ctx.arc(px + 20, py + 18, 4, Math.PI, 0); // shackle
+			this.ctx.strokeStyle = '#FFD700';
+			this.ctx.lineWidth = 2;
+			this.ctx.stroke();
+			
+			// Lock body
+			this.ctx.fillStyle = '#FFD700';
+			this.ctx.beginPath();
+			this.ctx.rect(px + 15, py + 18, 10, 8);
+			this.ctx.fill();
+			this.ctx.fillStyle = '#000';
+			this.ctx.fillRect(px + 19, py + 20, 2, 4); // Keyhole
 		}
 	}
 
 	drawRocks() {
-		this.ctx.fillStyle = '#5D4037';
 		for (let rock of this.rocks) {
+			const rx = rock.x * this.tileSize;
+			const ry = rock.y * this.tileSize;
+			
+			// Rounded chunky boulder
+			this.ctx.fillStyle = '#78909C'; // Cool gray slate color
 			this.ctx.beginPath();
-			this.ctx.roundRect(
-				rock.x * this.tileSize + 6,
-				rock.y * this.tileSize + 6,
-				this.tileSize - 12,
-				this.tileSize - 12,
-				6
-			);
+			this.ctx.roundRect(rx + 4, ry + 4, this.tileSize - 8, this.tileSize - 8, 8);
 			this.ctx.fill();
+			
+			// Dark slate shadows
+			this.ctx.fillStyle = '#546E7A';
+			this.ctx.beginPath();
+			this.ctx.roundRect(rx + 8, ry + 18, this.tileSize - 16, this.tileSize - 24, 4);
+			this.ctx.fill();
+			
+			// Highlighting ridges
+			this.ctx.fillStyle = '#CFD8DC';
+			this.ctx.fillRect(rx + 8, ry + 6, 12, 3);
+			this.ctx.fillRect(rx + 6, ry + 9, 3, 10);
+
+			// Crack lines
+			this.ctx.strokeStyle = '#37474F';
+			this.ctx.lineWidth = 2;
+			this.ctx.beginPath();
+			this.ctx.moveTo(rx + 10, ry + 10);
+			this.ctx.lineTo(rx + 18, ry + 18);
+			this.ctx.lineTo(rx + 16, ry + 28);
+			this.ctx.moveTo(rx + 24, ry + 12);
+			this.ctx.lineTo(rx + 20, ry + 22);
+			this.ctx.stroke();
 		}
-		this.ctx.lineWidth = 1;
 	}
 
 	drawPlayer() {
 		const px = this.player.x * this.tileSize + this.tileSize / 2;
 		const py = this.player.y * this.tileSize + this.tileSize / 2;
-		this.ctx.shadowBlur = 18;
-		this.ctx.shadowColor = '#FF9800';
-		this.ctx.fillStyle = '#FFB74D';
+		
+		// Draw a highly polished 90s-style retro mole!
+		// Mole body
+		this.ctx.fillStyle = '#795548'; // Brown mole fur
 		this.ctx.beginPath();
-		this.ctx.arc(px, py, 16, 0, Math.PI * 2);
+		this.ctx.arc(px, py + 2, 15, 0, Math.PI * 2);
 		this.ctx.fill();
-		this.ctx.shadowBlur = 0;
-		this.ctx.fillStyle = '#37474F';
-		this.ctx.fillRect(px - 12, py - 4, 24, 8);
-		this.ctx.fillStyle = '#D84315';
-		this.ctx.fillRect(px - 10, py + 6, 8, 10);
-		this.ctx.fillRect(px + 2, py + 6, 8, 10);
+		
+		// Inner belly
+		this.ctx.fillStyle = '#D7CCC8'; // Light beige belly
+		this.ctx.beginPath();
+		this.ctx.arc(px, py + 6, 9, 0, Math.PI * 2);
+		this.ctx.fill();
+
+		// Face / Snout
+		this.ctx.fillStyle = '#FFCCBC'; // Cute pinkish nose snout
+		this.ctx.beginPath();
+		this.ctx.arc(px, py - 4, 7, 0, Math.PI * 2);
+		this.ctx.fill();
+		
+		// Mole nose tip
+		this.ctx.fillStyle = '#E64A19'; 
+		this.ctx.beginPath();
+		this.ctx.arc(px, py - 7, 3, 0, Math.PI * 2);
+		this.ctx.fill();
+
+		// Shiny black eyes with safety goggles!
+		this.ctx.strokeStyle = '#FFEB3B'; // Yellow goggle frame
+		this.ctx.lineWidth = 2;
+		this.ctx.beginPath();
+		this.ctx.arc(px - 5, py - 4, 4, 0, Math.PI * 2);
+		this.ctx.arc(px + 5, py - 4, 4, 0, Math.PI * 2);
+		this.ctx.stroke();
+		
+		this.ctx.fillStyle = '#00E676'; // Cool green goggle/lens reflections!
+		this.ctx.beginPath();
+		this.ctx.arc(px - 5, py - 4, 2.5, 0, Math.PI * 2);
+		this.ctx.arc(px + 5, py - 4, 2.5, 0, Math.PI * 2);
+		this.ctx.fill();
+
+		this.ctx.fillStyle = 'white';
+		this.ctx.beginPath();
+		this.ctx.arc(px - 6, py - 5, 1, 0, Math.PI * 2);
+		this.ctx.arc(px + 4, py - 5, 1, 0, Math.PI * 2);
+		this.ctx.fill();
+
+		// Yellow Miner/Construction Hat!
+		this.ctx.fillStyle = '#FBC02D'; // Deep yellow
+		this.ctx.beginPath();
+		this.ctx.arc(px, py - 9, 9, Math.PI, 0, false);
+		this.ctx.fill();
+		// Hat brim
+		this.ctx.fillRect(px - 11, py - 9, 22, 3);
+		// Hat lamp center
+		this.ctx.fillStyle = '#FFF';
+		this.ctx.beginPath();
+		this.ctx.arc(px, py - 11, 2, 0, Math.PI * 2);
+		this.ctx.fill();
+		
+		// Hands holding a small pickaxe
+		this.ctx.fillStyle = '#795548'; // Hands
+		this.ctx.beginPath();
+		this.ctx.arc(px - 11, py + 4, 4, 0, Math.PI * 2);
+		this.ctx.arc(px + 11, py + 4, 4, 0, Math.PI * 2);
+		this.ctx.fill();
+
+		// Pickaxe handle
+		this.ctx.strokeStyle = '#8D6E63'; // Wooden stick
+		this.ctx.lineWidth = 2;
+		this.ctx.beginPath();
+		this.ctx.moveTo(px + 8, py + 10);
+		this.ctx.lineTo(px + 14, py - 2);
+		this.ctx.stroke();
+		// Pickaxe steel blade
+		this.ctx.strokeStyle = '#B0BEC5';
+		this.ctx.lineWidth = 3;
+		this.ctx.beginPath();
+		this.ctx.arc(px + 14, py - 2, 6, Math.PI * 1.2, Math.PI * 1.8);
+		this.ctx.stroke();
 	}
 
 	drawEnemies() {
 		for (let enemy of this.enemies) {
 			const px = enemy.x * this.tileSize + this.tileSize / 2;
 			const py = enemy.y * this.tileSize + this.tileSize / 2;
-			this.ctx.fillStyle = '#E53935';
+			
+			// Animated hovering hover-monster!
+			const bounce = Math.sin((Date.now() / 150) + enemy.x * 2) * 2;
+			
+			// Devil/Spiky body
+			this.ctx.fillStyle = '#E53935'; // Red base
 			this.ctx.beginPath();
-			this.ctx.arc(px, py, 14, 0, Math.PI * 2);
+			this.ctx.arc(px, py + bounce, 14, 0, Math.PI * 2);
 			this.ctx.fill();
-			this.ctx.fillStyle = '#FFF';
+			
+			// Back/side spikes!
+			this.ctx.fillStyle = '#B71C1C'; // Dark red spikes
 			this.ctx.beginPath();
-			this.ctx.arc(px - 5, py - 4, 3, 0, Math.PI * 2);
-			this.ctx.arc(px + 5, py - 4, 3, 0, Math.PI * 2);
+			this.ctx.moveTo(px - 10, py - 10 + bounce);
+			this.ctx.lineTo(px - 16, py - 16 + bounce);
+			this.ctx.lineTo(px - 4, py - 13 + bounce);
 			this.ctx.fill();
+			
+			this.ctx.beginPath();
+			this.ctx.moveTo(px + 10, py - 10 + bounce);
+			this.ctx.lineTo(px + 16, py - 16 + bounce);
+			this.ctx.lineTo(px + 4, py - 13 + bounce);
+			this.ctx.fill();
+			
+			// Angry eyes
+			this.ctx.fillStyle = '#FFEB3B';
+			this.ctx.beginPath();
+			this.ctx.arc(px - 5, py - 3 + bounce, 4, 0, Math.PI * 2);
+			this.ctx.arc(px + 5, py - 3 + bounce, 4, 0, Math.PI * 2);
+			this.ctx.fill();
+			
 			this.ctx.fillStyle = '#000';
 			this.ctx.beginPath();
-			this.ctx.arc(px - 5, py - 4, 1.5, 0, Math.PI * 2);
-			this.ctx.arc(px + 5, py - 4, 1.5, 0, Math.PI * 2);
+			this.ctx.arc(px - 4, py - 3 + bounce, 1.8, 0, Math.PI * 2);
+			this.ctx.arc(px + 4, py - 3 + bounce, 1.8, 0, Math.PI * 2);
+			this.ctx.fill();
+			
+			// Angled eyebrows
+			this.ctx.strokeStyle = '#000';
+			this.ctx.lineWidth = 2;
+			this.ctx.beginPath();
+			this.ctx.moveTo(px - 9, py - 7 + bounce);
+			this.ctx.lineTo(px - 2, py - 4 + bounce);
+			this.ctx.moveTo(px + 9, py - 7 + bounce);
+			this.ctx.lineTo(px + 2, py - 4 + bounce);
+			this.ctx.stroke();
+
+			// Monster fangs/mouth
+			this.ctx.fillStyle = '#FFFFFF';
+			this.ctx.beginPath();
+			this.ctx.moveTo(px - 6, py + 4 + bounce);
+			this.ctx.lineTo(px - 4, py + 8 + bounce);
+			this.ctx.lineTo(px - 2, py + 4 + bounce);
+			this.ctx.lineTo(px, py + 8 + bounce);
+			this.ctx.lineTo(px + 2, py + 4 + bounce);
+			this.ctx.lineTo(px + 4, py + 8 + bounce);
+			this.ctx.lineTo(px + 6, py + 4 + bounce);
+			this.ctx.closePath();
 			this.ctx.fill();
 		}
 	}
@@ -627,13 +858,13 @@ class TunnelQuestGame {
 
 	drawHUD() {
 		const mission = this.currentConfig;
-		this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-		this.ctx.fillRect(0, 0, this.canvas.width, 50);
+		this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+		this.ctx.fillRect(0, 0, this.canvas.width, 52);
 
 		this.ctx.fillStyle = '#FFD700';
-		this.ctx.font = 'bold 20px Segoe UI';
+		this.ctx.font = 'bold 16px Segoe UI';
 		this.ctx.textAlign = 'left';
-		this.ctx.fillText(`Level ${this.level}: ${mission.name}`, 14, 28);
+		this.ctx.fillText(`Level ${this.level}: ${mission.name}`, 14, 22);
 
 		if (this.levelIntroTime > 0) {
 			this.levelIntroTime--;
@@ -645,17 +876,18 @@ class TunnelQuestGame {
 			this.ctx.fillStyle = 'white';
 			this.ctx.fillText(mission.mission, this.canvas.width / 2, this.canvas.height / 2 + 10);
 		} else {
-			this.ctx.fillStyle = '#FFFFFF';
-			this.ctx.font = '16px Segoe UI';
-			this.ctx.textAlign = 'center';
-			this.ctx.fillText(mission.mission, this.canvas.width / 2, 28);
+			this.ctx.fillStyle = '#AABBC4';
+			this.ctx.font = '13px Segoe UI';
+			this.ctx.textAlign = 'left';
+			this.ctx.fillText(`🎯 Obj: ${mission.mission}`, 14, 42);
 		}
 
 		// Time remaining
 		const time = Math.max(0, Math.floor(this.timeRemaining));
 		this.ctx.textAlign = 'right';
+		this.ctx.font = 'bold 16px Segoe UI';
 		this.ctx.fillStyle = time < 15 ? '#FF6B6B' : '#8BC34A';
-		this.ctx.fillText(`Air: ${time}s`, this.canvas.width - 16, 28);
+		this.ctx.fillText(`Air: ${time}s`, this.canvas.width - 16, 22);
 
 		// Combo indicator
 		if (this.combo > 1 && this.comboTimer > 0) {

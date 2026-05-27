@@ -398,7 +398,6 @@
 		stage.bind('keydown',function(e){
 			switch(e.keyCode){
 				case 13:
-				case 32:
 				game.nextStage();
 				break;
 			}
@@ -636,7 +635,17 @@
 						if(this.status==3&&!this.timeout){
 							this.status = 1;
 						}
-						if(!this.coord.offset){			// Calculate at coord center
+						var coord = this.coord;
+						var isCentered = !coord.offset;
+						if (coord.offset < this.speed) {
+							var pos = map.coord2position(coord.x, coord.y);
+							this.x = pos.x;
+							this.y = pos.y;
+							this.coord = map.position2coord(this.x, this.y);
+							coord = this.coord;
+							isCentered = true;
+						}
+						if(isCentered){			// Calculate at coord center
 							if(this.status==1){
 								if(!this.timeout){		// Timer
 									new_map = JSON.parse(JSON.stringify(map.data).replace(/2/g,0));
@@ -708,14 +717,6 @@
 						this.y += this.speed*_SIN[this.orientation];
 					},
 				draw:function(context){
-					// DEBUG: Draw a simple rectangle to verify position
-					if(!window._npcDrawLogged) {
-						console.log('NPC draw called! x=', this.x, 'y=', this.y, 'color=', this.color);
-						window._npcDrawLogged = true;
-					}
-					context.fillStyle = this.color||'#F00';
-					context.fillRect(this.x-10, this.y-10, 20, 20);
-					
 					var isSick = false;
 					if(this.status==3){
 						isSick = this.timeout>80||this.times%2?true:false;
@@ -769,20 +770,47 @@
 		}
 		items = stage.getItemsByType(2);
 		
+		var playerStartY = 23;
+		var preferredRows = [21, 23, 25, 27, 19, 11, 5];
+		for (var rIndex = 0; rIndex < preferredRows.length; rIndex++) {
+			var pr = preferredRows[rIndex];
+			if (config['map'][pr] && config['map'][pr][13] === 0 && config['map'][pr][14] === 0) {
+				playerStartY = pr;
+				break;
+			}
+		}
+		if (playerStartY === 23) {
+			for (var r = 0; r < config['map'].length; r++) {
+				if (config['map'][r][13] === 0 && config['map'][r][14] === 0) {
+					playerStartY = r;
+					break;
+				}
+			}
+		}
+
 		// Player
 		player = stage.createItem({
 				width:30,
 				height:30,
 				type:1,
 				location:map,
-				coord:{x:13.5,y:23},
-				vector:{x:13.5,y:23},
+				coord:{x:13.5,y:playerStartY},
+				vector:{x:13.5,y:playerStartY},
 				orientation:2,
 				speed:2,
 				frames:10,
 				update:function(){
 					var coord = this.coord;
-					if(!coord.offset){
+					var isCentered = !coord.offset;
+					if (coord.offset < this.speed) {
+						var pos = map.coord2position(coord.x, coord.y);
+						this.x = pos.x;
+						this.y = pos.y;
+						this.coord = map.position2coord(this.x, this.y);
+						coord = this.coord;
+						isCentered = true;
+					}
+					if(isCentered){
 						if(typeof this.control.orientation != 'undefined'){
 							if(!map.get(coord.x+_COS[this.control.orientation],coord.y+_SIN[this.control.orientation])){
 								this.orientation = this.control.orientation;
@@ -815,14 +843,6 @@
 					}
 				},
 				draw:function(context){
-					// DEBUG: Draw a yellow rectangle to verify position
-					if(!window._playerDrawLogged) {
-						console.log('Player draw called! x=', this.x, 'y=', this.y);
-						window._playerDrawLogged = true;
-					}
-					context.fillStyle = '#FFE600';
-					context.fillRect(this.x-10, this.y-10, 20, 20);
-					
 					context.fillStyle = '#FFE600';
 					context.beginPath();
 					if(stage.status!=3){	// Normal state
@@ -847,7 +867,6 @@
 		player.y = playerPos.y;			// Event bindings
 			stage.bind('keydown',function(e){
 				switch(e.keyCode){
-					case 13: // Enter
 					case 32: // Space
 					this.status = this.status==2?1:2;
 					break;
@@ -914,7 +933,6 @@
 		stage.bind('keydown',function(e){
 			switch(e.keyCode){
 				case 13: // Enter
-				case 32: // Space
 				_SCORE = 0;
 				_LIFE = 5;
 				game.setStage(1);

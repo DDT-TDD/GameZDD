@@ -3,109 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameZDD V1.0 - Puzzle Game Collection</title>
+    <title>GameZDD — Retro Arcade Collection</title>
     <link rel="stylesheet" href="launcher.css">
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <h1 class="title">🎮 GameZDD V1.0</h1>
-            <p class="subtitle">Educational Puzzle Game Collection</p>
-            <div class="header-buttons">
-                <button class="icon-button" id="settingsBtn" title="Settings">⚙️</button>
-                <button class="icon-button" id="helpBtn" title="Help">❓</button>
-            </div>
-        </header>
+<div class="container">
 
-        <main class="game-grid" id="gameGrid">
-            <!-- Games will be dynamically loaded here -->
-        </main>
+    <!-- ══════════════ HEADER ══════════════ -->
+    <header class="header">
+        <h1 class="title">🕹 GAMEZDD</h1>
+        <p class="subtitle">Retro Arcade Collection</p>
+        <div class="header-buttons">
+            <button class="icon-button" id="settingsBtn" title="Settings">⚙️</button>
+            <button class="icon-button" id="helpBtn" title="How to Play">❓</button>
+        </div>
+    </header>
 
-        <footer class="footer">
-            <div class="play-time">Play Time Today: <span id="playTime">0m</span></div>
-            <div class="version">Version 1.0 | Made with ❤️ for Learning</div>
-        </footer>
-    </div>
-
-    <!-- Settings Modal -->
-    <div class="modal" id="settingsModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>⚙️ Settings</h2>
-                <button class="close-btn" id="closeSettings">✖️</button>
-            </div>
-            <div class="modal-body">
-                <div class="setting-group">
-                    <label>🎵 Music Volume</label>
-                    <input type="range" id="musicVolume" min="0" max="100" value="50">
-                    <button class="toggle-btn" id="toggleMusic">🔊 Music On</button>
-                </div>
-                <div class="setting-group">
-                    <label>🔊 Sound Effects Volume</label>
-                    <input type="range" id="sfxVolume" min="0" max="100" value="70">
-                    <button class="toggle-btn" id="toggleSFX">🔊 SFX On</button>
-                </div>
-                <div class="setting-group">
-                    <label>👤 Player Name</label>
-                    <input type="text" id="playerName" placeholder="Enter your name" maxlength="20">
-                </div>
-                <div class="setting-group">
-                    <label>🎨 Theme</label>
-                    <select id="theme">
-                        <option value="default">Colorful (Default)</option>
-                        <option value="dark">Dark Mode</option>
-                        <option value="high-contrast">High Contrast</option>
-                    </select>
-                </div>
-                <div class="setting-group">
-                    <button class="action-btn" id="resetProgress">🔄 Reset All Progress</button>
-                </div>
-            </div>
+    <!-- ══════════════ TOOLBAR ══════════════ -->
+    <div class="toolbar">
+        <div class="search-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" placeholder="Search games…" autocomplete="off">
+        </div>
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">All Games</button>
+            <button class="filter-btn" data-filter="maze">Maze</button>
+            <button class="filter-btn" data-filter="action">Action</button>
+            <button class="filter-btn" data-filter="puzzle">Puzzle</button>
+            <button class="filter-btn" data-filter="bubble">Bubble</button>
         </div>
     </div>
 
-    <!-- Help Modal -->
-    <div class="modal" id="helpModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>❓ How to Play</h2>
-                <button class="close-btn" id="closeHelp">✖️</button>
+    <!-- ══════════════ GAME GRID ══════════════ -->
+    <main class="game-grid" id="gameGrid"></main>
+
+    <!-- ══════════════ FOOTER ══════════════ -->
+    <footer class="footer">
+        <div class="play-time">⏱ Session: <span id="playTime">0m</span></div>
+        <div class="version">GameZDD V1.1 — 16 Classic Games</div>
+    </footer>
+
+</div><!-- /container -->
+
+<!-- ══════════════ SETTINGS MODAL ══════════════ -->
+<div class="modal" id="settingsModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>⚙️ SETTINGS</h2>
+            <button class="close-btn" id="closeSettings">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="setting-group">
+                <label>🎵 Music Volume</label>
+                <input type="range" id="musicVolume" min="0" max="100" value="50">
+                <button class="toggle-btn" id="toggleMusic">🔊 Music On</button>
             </div>
-            <div class="modal-body">
-                <div class="help-section">
-                    <h3>🎮 Controls</h3>
-                    <ul>
-                        <li><strong>Arrow Keys</strong> or <strong>WASD</strong> - Move around</li>
-                        <li><strong>Spacebar</strong> or <strong>Enter</strong> - Action button</li>
-                        <li><strong>ESC</strong> - Pause game</li>
-                        <li><strong>Mouse</strong> - Click buttons and menus</li>
-                    </ul>
-                </div>
-                <div class="help-section">
-                    <h3>🎯 Tips</h3>
-                    <ul>
-                        <li>Start with easier games if you're new!</li>
-                        <li>Use hints if you get stuck</li>
-                        <li>Your progress is saved automatically</li>
-                        <li>Take breaks every 30 minutes</li>
-                        <li>Have fun and don't give up! 🌟</li>
-                    </ul>
-                </div>
-                <div class="help-section">
-                    <h3>🏆 Game Categories</h3>
-                    <ul>
-                        <li><strong>Maze Puzzles</strong> - Navigate and solve challenges</li>
-                        <li><strong>Block Puzzles</strong> - Match and clear pieces</li>
-                        <li><strong>Action Puzzles</strong> - Quick thinking and movement</li>
-                    </ul>
-                </div>
+            <div class="setting-group">
+                <label>🔊 Sound Effects</label>
+                <input type="range" id="sfxVolume" min="0" max="100" value="70">
+                <button class="toggle-btn" id="toggleSFX">🔊 SFX On</button>
+            </div>
+            <div class="setting-group">
+                <label>👤 Player Name</label>
+                <input type="text" id="playerName" placeholder="Enter your name" maxlength="20">
+            </div>
+            <div class="setting-group">
+                <label>🎨 Theme</label>
+                <select id="theme">
+                    <option value="">Dark (Default)</option>
+                    <option value="light">Light Mode</option>
+                </select>
+            </div>
+            <div class="setting-group">
+                <button class="action-btn" id="resetProgress">🔄 Reset All Progress</button>
             </div>
         </div>
     </div>
+</div>
 
-    <script src="engine/audioManager.js"></script>
-    <script src="engine/inputHandler.js"></script>
-    <script src="engine/saveManager.js"></script>
-    <script src="launcher.js"></script>
+<!-- ══════════════ HELP MODAL ══════════════ -->
+<div class="modal" id="helpModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>❓ HOW TO PLAY</h2>
+            <button class="close-btn" id="closeHelp">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="help-section">
+                <h3>🎮 Controls</h3>
+                <ul>
+                    <li><strong>Arrow Keys / WASD</strong> — Move character</li>
+                    <li><strong>Space / W / Up</strong> — Jump or shoot</li>
+                    <li><strong>ESC</strong> — Pause / return to menu</li>
+                    <li><strong>Mouse</strong> — Click buttons and aim</li>
+                    <li><strong>P</strong> — Pause toggle (most games)</li>
+                </ul>
+            </div>
+            <div class="help-section">
+                <h3>🏆 Tips</h3>
+                <ul>
+                    <li>Progress is <strong>auto-saved</strong> as you play</li>
+                    <li>Each game has a <strong>Speed Slider</strong> — start slow!</li>
+                    <li>Use the <strong>Fullscreen</strong> button for the best experience</li>
+                    <li>Green bar = Easy · Yellow = Medium · Red = Hard</li>
+                </ul>
+            </div>
+            <div class="help-section">
+                <h3>📂 Categories</h3>
+                <ul>
+                    <li><strong>Maze</strong> — Navigation and puzzle-solving games</li>
+                    <li><strong>Action</strong> — Platformers and dodge games</li>
+                    <li><strong>Puzzle</strong> — Memory and logic games</li>
+                    <li><strong>Bubble</strong> — Ball and block matching games</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════ TOAST ══════════════ -->
+<div id="toast"></div>
+
+<script src="engine/audioManager.js"></script>
+<script src="engine/saveManager.js"></script>
+<script src="launcher.js"></script>
 </body>
 </html>

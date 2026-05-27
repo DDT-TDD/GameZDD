@@ -3,51 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memory Game - Card Matching</title>
+    <title>Memory Cards — GameZDD</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .game-header {
-            margin: 20px 0 10px;
-        }
-
-        .lvlList {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin: 10px 0 20px;
-        }
-
-        #game-info {
-            font-size: 16px;
-            color: #555;
-            margin: 15px 0;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .game-footer-nav {
-            margin-top: 20px;
-        }
-
-        .back-button {
-            display: inline-block;
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 25px;
-            font-weight: bold;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .back-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@600;700&display=swap');
+        body { background: linear-gradient(135deg,#0a0a1a 0%,#1a0a2e 100%); font-family:'Rajdhani','Segoe UI',sans-serif; }
+        h1 { font-family:'Orbitron',monospace; font-size:1.8rem; letter-spacing:3px;
+             background:linear-gradient(135deg,#00f7ff,#b44fff); -webkit-background-clip:text;
+             -webkit-text-fill-color:transparent; background-clip:text;
+             margin:18px 0 4px; filter:drop-shadow(0 0 12px rgba(180,79,255,0.6)); color:unset; }
+        p { color:#a0a8c0; font-weight:600; letter-spacing:1px; }
+        #game-info { font-size:1rem; color:#00f7ff; margin:12px 0; min-height:30px;
+                     display:flex; align-items:center; justify-content:center; font-weight:700; letter-spacing:1px; }
+        .lvlList { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin:10px 0 18px; }
+        .lvlButton { padding:10px 22px; background:rgba(180,79,255,0.15); border:2px solid rgba(180,79,255,0.5);
+                     color:#b44fff; font-family:'Rajdhani',sans-serif; font-size:0.9rem; font-weight:700;
+                     letter-spacing:2px; text-transform:uppercase; border-radius:30px; cursor:pointer;
+                     transition:all 0.2s; }
+        .lvlButton:hover { background:rgba(180,79,255,0.35); box-shadow:0 0 14px rgba(180,79,255,0.5); color:#fff; }
+        .lvlButton:disabled { background:linear-gradient(135deg,#b44fff,#00f7ff); border-color:transparent;
+                              color:#fff; box-shadow:0 0 18px rgba(180,79,255,0.6); }
+        .back-button { display:inline-block; padding:11px 28px;
+                       background:linear-gradient(135deg,#b44fff 0%,#ff2d78 100%); color:white;
+                       text-decoration:none; border-radius:25px; font-family:'Rajdhani',sans-serif;
+                       font-weight:700; font-size:0.9rem; letter-spacing:2px; text-transform:uppercase;
+                       transition:transform 0.2s,box-shadow 0.2s; box-shadow:0 4px 18px rgba(180,79,255,0.4); }
+        .back-button:hover { transform:translateY(-2px); box-shadow:0 6px 24px rgba(180,79,255,0.6); }
+        .game-footer-nav { margin:24px 0 16px; }
+        .win-text { color:#ffe600; font-family:'Orbitron',monospace; text-shadow:0 0 20px rgba(255,230,0,0.8); }
+        .flipper { background:linear-gradient(135deg,#1a1a3e,#2a1a4e) !important; border-color:rgba(180,79,255,0.5) !important; }
+        .front { color:#00f7ff !important; text-shadow:0 0 10px rgba(0,247,255,0.6) !important; }
+        .back { background-image:repeating-linear-gradient(45deg,rgba(180,79,255,0.15),rgba(180,79,255,0.15) 5px,
+                rgba(0,247,255,0.1) 5px,rgba(0,247,255,0.1) 10px) !important; }
     </style>
 </head>
 <body>
@@ -66,20 +53,27 @@
 
     <!-- Manager Scripts -->
     <script src="../../engine/audioManager.js"></script>
-    <script src="../../engine/inputHandler.js"></script>
     <script src="../../engine/saveManager.js"></script>
     <script src="game.js"></script>
     <script>
-        // Load game data and initialize
-        fetch('data.json')
-            .then(response => response.json())
-            .then(gameData => {
-                new MemoryGame(gameData);
-            })
-            .catch(error => {
-                console.error('Error loading game data:', error);
-                document.getElementById('game-info').innerHTML = '❌ Error loading game. Please refresh the page.';
-            });
+        // Inline game data — avoids fetch() failure on file:// protocol
+        var MEMORY_GAME_DATA = {
+          "labels": {
+            "title": "Memory Cards — GameZDD",
+            "header": "🃏 Memory Cards",
+            "instructions": "Click cards to find <strong>{{requiredMatches}}</strong> matching pairs",
+            "stats": "Finished in <strong>{{clicks}}</strong> clicks — <strong>{{sucessPercent}}%</strong> efficiency!",
+            "victory": "🎉 You Win!",
+            "footer": "Memory Cards | Match all pairs to win!"
+          },
+          "cardDimensions": { "unit": "px", "gutter": 10, "height": 80, "width": 80 },
+          "lvls": {
+            "Easy":   { "rows": 3, "cols": 4, "requiredMatches": 2, "keptRevealed": 1 },
+            "Medium": { "rows": 4, "cols": 6, "requiredMatches": 2, "keptRevealed": 0 },
+            "Hard":   { "rows": 5, "cols": 6, "requiredMatches": 3, "keptRevealed": 2, "panicMode": true }
+          }
+        };
+        new MemoryGame(MEMORY_GAME_DATA);
     </script>
 </body>
 </html>

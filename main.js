@@ -11,8 +11,8 @@ function createWindow() {
             nodeIntegration: true,
             contextIsolation: false
         },
-        icon: path.join(__dirname, 'assets/icon.png'),
-        title: 'GameZDD V1.0 - Puzzle Game Collection',
+        icon: path.join(__dirname, 'assets/icon.ico'),
+        title: 'GameZDD V1.1 - Retro Arcade Collection',
         backgroundColor: '#667eea',
         show: false
     });
